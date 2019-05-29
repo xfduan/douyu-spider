@@ -1,5 +1,4 @@
-build/*
-dist/*
-danmu.egg-info/*
-*.pyc
-*.swp
+*.mp4
+**/__pycache__/
+
+.idea
