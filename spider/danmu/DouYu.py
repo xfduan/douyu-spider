@@ -21,7 +21,7 @@ class _socket(socket.socket):
         try:  # for socket.settimeout
             return self.recv(9999)
         except Exception as e:
-            return ''
+            pass
 
 
 class DouYuDanMuClient(AbstractDanMuClient):
@@ -40,8 +40,8 @@ class DouYuDanMuClient(AbstractDanMuClient):
         self.danmuSocket = _socket()
         self.danmuSocket.connect(danmu)
         self.danmuSocket.settimeout(3)
-        self.danmuSocket.communicate('type@=loginreq/roomid@=%s/' % roomInfo['room_id'])
-        self.danmuSocket.push('type@=joingroup/rid@=%s/gid@=-9999/' % roomInfo['room_id'])
+        self.danmuSocket.communicate('type@=loginreq/roomid@=%s/ver@=20190530/ct@=0/' % roomInfo['room_id'])
+        self.danmuSocket.push('type@=joingroup/rid@=1126960/gid@=3/')
 
     def _create_thread_fn(self, roomInfo):
         def keep_alive(_self):
@@ -49,17 +49,21 @@ class DouYuDanMuClient(AbstractDanMuClient):
             time.sleep(30)
 
         def get_danmu(_self):
-            if not select.select([_self.danmuSocket], [], [], 1)[0]: return
+            if not select.select([_self.danmuSocket], [], [], 1)[0]:
+                return
+
             content = _self.danmuSocket.pull()
             for msg in re.findall(b'(type@=.*?)\x00', content):
                 try:
                     msg = msg.replace(b'@=', b'":"').replace(b'/', b'","')
                     msg = msg.replace(b'@A', b'@').replace(b'@S', b'/')
                     msg = json.loads((b'{"' + msg[:-2] + b'}').decode('utf8', 'ignore'))
+                    print(msg)
                     msg['NickName'] = msg.get('nn', '')
                     msg['Content'] = msg.get('txt', '')
-                    msg['MsgType'] = {'dgb': 'gift', 'chatmsg': 'danmu',
-                                      'uenter': 'enter'}.get(msg['type'], 'other')
+                    msg['MsgType'] = {
+                        'dgb': 'gift', 'chatmsg': 'danmu', 'uenter': 'enter'
+                    }.get(msg['type'], 'other')
                 except Exception as e:
                     pass
                 else:

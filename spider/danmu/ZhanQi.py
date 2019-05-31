@@ -1,16 +1,16 @@
-import sys, json, time, re, base64
-import socket, threading, select
+import json, time, re, base64
+import socket, select
 from struct import pack
 
 import requests
 
-from danmu.config import USER_AGENT
+from spider.danmu.config import USER_AGENT
 from .Abstract import AbstractDanMuClient
 
 class ZhanQiDanMuClient(AbstractDanMuClient):
     def _get_live_status(self):
         r = requests.get('https://www.zhanqi.tv/' +
-            self.url.split('/')[-1] or self.url.split('/')[-2], 
+            self.url.split('/')[-1] or self.url.split('/')[-2],
             headers={'User-Agent': USER_AGENT})
         if r.url == 'https://www.zhanqi.tv/': return False
         rawJson = re.findall('oRoom = (.*);[\s\S]*?window.', r.text)
