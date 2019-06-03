@@ -1,8 +1,4 @@
-from spider.config import env
-import time
+from spider.client.douyu_client import DouYuClient
 
-if __name__ == '__main__':
-    print(env.id)
-    while True:
-        time.sleep(1)
-        print(env.id)
+dou_yu_client = DouYuClient(url="https://www.douyu.com/288016", version="20190530")
+dou_yu_client.start()
