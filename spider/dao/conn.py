@@ -7,7 +7,7 @@ class SqlExecutor(object):
             user="spider",
             password="spider",
             host="localhost",
-            port="30001",
+            port="3306",
             database="spider",
         )
         self.__cursor = self.__conn.cursor()
