@@ -13,30 +13,30 @@ class SqlExecutor(object):
         self.__cursor = self.__conn.cursor()
         self.__auto_commit = True
 
-    def fetch_all(self, sql):
-        self.__cursor.execute(sql)
+    def fetch_all(self, sql, params=(), multi=False):
+        self.__cursor.execute(sql, params, multi)
         res = self.__cursor.fetchall()
         if self.__auto_commit:
             self.close()
         return res
 
-    def fetch_one(self, sql):
-        self.__cursor.execute(sql)
+    def fetch_one(self, sql, params=(), multi=False):
+        self.__cursor.execute(sql, params, multi)
         res = self.__cursor.fetchone()
         if self.__auto_commit:
             self.close()
         return res
 
-    def insert(self, sql):
-        self.__cursor.execute(sql)
+    def insert(self, sql, params=(), multi=False):
+        self.__cursor.execute(sql, params, multi)
         res = self.__cursor.lastrowid
         if self.__auto_commit:
             self.commit()
             self.close()
         return res
 
-    def update(self, sql):
-        self.__cursor.execute(sql)
+    def update(self, sql, params=(), multi=False):
+        self.__cursor.execute(sql, params, multi)
         res = self.__cursor.rowcount
         if self.__auto_commit:
             self.commit()

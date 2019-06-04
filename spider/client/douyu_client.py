@@ -1,6 +1,7 @@
 import json, re, select, time, requests, threading
 from spider.client.live_socket import LiveSocket
 from spider.client.abstract_client import AbstractClient
+from spider.dao.chat_message_dao import ChatMessageDao
 
 
 class DouYuClient(AbstractClient):
@@ -64,10 +65,14 @@ class DouYuClient(AbstractClient):
                 self.time_out_time = time.time() + 30
 
     def _process_chatmsg(self, msg):
-        user_id = msg.get("uid", "")
-        user_name = msg.get("nn", "")
-        content = msg.get("txt", "")
-        print("user_id: %s. user_name: %s. content: %s" % (user_id, user_name, content))
+        chat_message = {
+            "room_id": self.room_id,
+            "user_id": msg.get("uid"),
+            "user_name": msg.get("nn"),
+            "content": msg.get("txt")
+        }
+        print('ready insert', chat_message)
+        res = ChatMessageDao.insert(chat_message)
 
     def start(self):
         def inner_get_message():
