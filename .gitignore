@@ -1,9 +1,6 @@
-*.mp4
-**/__pycache__/
-
 .idea
-
-
 .DS_Store
 
-**/node_modules/
+log
+
+**/__pycache__/

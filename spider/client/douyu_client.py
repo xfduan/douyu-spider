@@ -2,6 +2,10 @@ import json, re, select, time, requests, threading
 from spider.client.live_socket import LiveSocket
 from spider.client.abstract_client import AbstractClient
 from spider.dao.chat_message_dao import ChatMessageDao
+from spider.dao.dou_yu_job_dao import DouYuJobDao
+from spider.util.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class DouYuClient(AbstractClient):
@@ -14,13 +18,14 @@ class DouYuClient(AbstractClient):
         self.room_id = self.url.split('/')[-1]
         url = 'http://open.douyucdn.cn/api/RoomApi/room/%s' % self.room_id
         room_status_res = requests.get(url).json()
-        print(room_status_res)
-        if room_status_res.get('error') != 0 or room_status_res['data'].get('room_status') != '1':
-            print("%s: 获取状态异常" % self.room_id)
-            return False
+        logger.info(room_status_res)
+        if room_status_res == "Not Found" \
+                or room_status_res.get('error') != 0 \
+                or room_status_res['data'].get('room_status') != '1':
+            raise Exception("%s: 获取直播间状态异常" % self.room_id)
         else:
-            print("%s: 获取状态成功" % self.room_id)
-            return True
+            self.time_out_repeat = 0
+            logger.info("%s: 获取直播间状态成功" % self.room_id)
 
     def _init_self_socket(self):
         """ 初始化 socket """
@@ -54,25 +59,24 @@ class DouYuClient(AbstractClient):
                 msg = msg.replace(b'@A', b'@').replace(b'@S', b'/')
                 msg = json.loads((b'{"' + msg[:-2] + b'}').decode('utf8', 'ignore'))
                 if msg.get('type') == 'chatmsg':
-                    self._process_chatmsg(msg)
+                    self._process_chat_msg(msg)
                 else:
-                    # print(msg)
                     pass
             except Exception as e:
-                print(e)
+                logger.error(e)
             else:
                 self.msg_pipe.append(msg)
                 self.time_out_time = time.time() + 30
 
-    def _process_chatmsg(self, msg):
+    def _process_chat_msg(self, msg):
         chat_message = {
             "room_id": self.room_id,
             "user_id": msg.get("uid"),
             "user_name": msg.get("nn"),
             "content": msg.get("txt")
         }
-        print('ready insert', chat_message)
-        res = ChatMessageDao.insert(chat_message)
+        logger.info('ready insert: %s' % chat_message)
+        ChatMessageDao.insert(chat_message)
 
     def start(self):
         def inner_get_message():
@@ -86,16 +90,17 @@ class DouYuClient(AbstractClient):
                     else:
                         self._get_message()
             except Exception as e:
-                print(e)
-                if self.time_out_repeat >= 3:
-                    print("%s 重试次数达到三次，放弃" % self.room_id)
-                    return
-
-                print("%s 准备第 %s 次重新连接" % (self.room_id, self.time_out_repeat + 1))
-                time.sleep(5)
-                self.time_out_repeat += 1
-                self._close_self_socket()
-                self.start()
+                logger.error(e)
+                if self.time_out_repeat < 3:
+                    logger.info("%s 准备第 %s 次重新连接" % (self.room_id, self.time_out_repeat + 1))
+                    # 等待一段时间，重试连接
+                    time.sleep(self.time_wait)
+                    self.time_out_repeat += 1
+                    self._close_self_socket()
+                    self.start()
+                else:
+                    logger.info("%s 重试次数达到三次，放弃" % self.room_id)
+                    DouYuJobDao.update_chat_status(self.room_id, DouYuJobDao.COMPLETE)
 
         def inner_keep_alive():
             """ 维持连接不断开 """
@@ -103,7 +108,7 @@ class DouYuClient(AbstractClient):
                 while True:
                     self._keep_alive()
             except Exception as e:
-                print("keep alive error: %s" % e)
+                logger.error("keep alive error: %s" % e)
 
         message_thread = threading.Thread(target=inner_get_message)
         message_thread.setDaemon(True)

@@ -1,2 +1,0 @@
-# config
-DOU_YU_VERSION = '20190530'

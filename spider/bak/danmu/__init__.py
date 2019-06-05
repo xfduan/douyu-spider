@@ -3,13 +3,13 @@ import threading
 import time
 import traceback
 
-from spider.danmu.Bilibili import BilibiliDanMuClient
-from spider.danmu.DouYu import DouYuDanMuClient
-from spider.danmu.HuoMao import HuoMaoDanMuClient
-from spider.danmu.Panda import PandaDanMuClient
-from spider.danmu.QuanMin import QuanMinDanMuClient
-from spider.danmu.ZhanQi import ZhanQiDanMuClient
-from spider.danmu.config import VERSION
+from spider.bak.danmu import BilibiliDanMuClient
+from spider.bak.danmu.DouYu import DouYuDanMuClient
+from spider.bak.danmu import HuoMaoDanMuClient
+from spider.bak.danmu import PandaDanMuClient
+from spider.bak.danmu import QuanMinDanMuClient
+from spider.bak.danmu import ZhanQiDanMuClient
+from spider.bak.danmu import VERSION
 
 __version__ = VERSION
 __all__ = ['DanMuClient']

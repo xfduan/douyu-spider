@@ -1,6 +1,6 @@
 import sys
 
-from spider.danmu import DanMuClient
+from spider.bak.danmu import DanMuClient
 
 
 def pp(msg):

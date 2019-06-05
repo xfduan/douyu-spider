@@ -4,7 +4,7 @@ from struct import pack
 
 import requests
 
-from spider.danmu.config import USER_AGENT
+from spider.bak.danmu import USER_AGENT
 from .Abstract import AbstractDanMuClient
 
 class ZhanQiDanMuClient(AbstractDanMuClient):

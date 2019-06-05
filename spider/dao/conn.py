@@ -56,9 +56,3 @@ class SqlExecutor(object):
     def close(self):
         self.__cursor.close()
         self.__conn.close()
-
-
-if __name__ == "__main__":
-    executor = SqlExecutor()
-    result = executor.insert("insert into user (name) values ('xfduan')")
-    print(result)
