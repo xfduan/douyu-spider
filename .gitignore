@@ -2,6 +2,6 @@
 .DS_Store
 
 log
-result
+result/*.mp4
 
 **/__pycache__/
