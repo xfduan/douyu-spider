@@ -23,7 +23,8 @@ CREATE TABLE `chat_message` (
 CREATE TABLE `dou_yu_job` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `room_id` int(11) NOT NULL COMMENT '房间 id',
-  `stream_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '直播流地址',
+  `name` varchar(32) DEFAULT NULL COMMENT '名称',
+  `stream_url` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '直播流地址',
   `chat_status` tinyint(2) DEFAULT '0' COMMENT '弹幕状态 0-新建 1-处理中 2-结束',
   `video_status` tinyint(2) DEFAULT '0' COMMENT '视频状态 0-新建 1-处理中 2-结束',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',

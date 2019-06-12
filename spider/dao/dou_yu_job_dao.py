@@ -7,21 +7,24 @@ class DouYuJobDao(object):
     COMPLETE = 2
 
     @staticmethod
-    def query_chat_init_jobs():
+    def query_jobs():
         executor = SqlExecutor()
-        sql = "select room_id, chat_status from dou_yu_job where chat_status = '%s';"
+        sql = "select room_id, name, stream_url, chat_status, video_status from dou_yu_job;"
         tuples = executor.fetch_all(sql, DouYuJobDao.INIT)
         result = []
         for single in tuples:
             result.append({
                 "room_id": single[0],
-                "chat_status": single[1]
+                "name": single[1],
+                "stream_url": single[2],
+                "chat_status": single[3],
+                "video_status": single[4]
             })
         return result
 
     @staticmethod
-    def update_chat_status(room_id, chat_status):
+    def update_stream_url(room_id, stream_url):
         executor = SqlExecutor()
-        sql = "update dou_yu_job set chat_status = %s where room_id = %s;" % (chat_status, room_id)
-        res = executor.update(sql)
+        sql = "update dou_yu_job set stream_url = %s where room_id = %s;"
+        res = executor.update(sql, (stream_url, room_id))
         return res

@@ -14,10 +14,9 @@
   var $ = $ || window.$
 
   function injectAjax() {
-    var tmpRequest = XMLHttpRequest
-    // window.https = []
-    var targetRequest = function () {
-      var tmpRequestObj = new tmpRequest()
+    const tmpRequest = XMLHttpRequest
+    XMLHttpRequest = function () {
+      const tmpRequestObj = new tmpRequest()
       tmpRequestObj.addEventListener('readystatechange', event => {
         const {
           readyState,
@@ -26,19 +25,33 @@
           status
         } = event.target
         if (readyState === 4 && status === 200) {
-          // window.https.push({ response: response, responseURL: responseURL })
           if (responseURL.indexOf('/lapi/live/getH5Play/') > -1) {
+            const urlArr = responseURL.split('/')
+            const roomId = urlArr[urlArr.length - 1]
             const rtmp_url = JSON.parse(response).data.rtmp_url
             const rtmp_live = JSON.parse(response).data.rtmp_live
             const targetUrl = rtmp_url + '/' + rtmp_live
-            console.log(targetUrl)
-            window.streamUrl = targetUrl
+            console.log(roomId + ':' + targetUrl)
+            window._roomId = roomId
+            window._streamUrl = targetUrl
+            uploadRoomInfo(roomId, targetUrl)
           }
         }
       })
       return tmpRequestObj
     }
-    XMLHttpRequest = targetRequest
+  }
+
+  function uploadRoomInfo(roomId, streamUrl) {
+    $.post('http://localhost:3000/stream',
+      {
+        roomId: roomId,
+        streamUrl: streamUrl
+      },
+      result => {
+        console.log('result: ', result)
+      }
+    )
   }
 
   injectAjax()

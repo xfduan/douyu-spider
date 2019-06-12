@@ -3,10 +3,10 @@ import subprocess
 import signal
 
 
-# # 若当前目录不存在result文件夹则创建
-# if not os.path.exists("./result"):
-#     os.makedirs("./result")
-#
+# 若当前目录不存在result文件夹则创建
+if not os.path.exists("./result"):
+    os.makedirs("./result")
+
 # # 使用shell指令运行streamlink录制直播视频
 # cmd = """streamlink https://www.douyu.com/%s worst -o "./result/%s.mp4" --plugin-dirs "./" -f""" % (roomid,
 #                                                                                                     record_name)

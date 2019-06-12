@@ -75,7 +75,7 @@ class DouYuClient(AbstractClient):
             "user_name": msg.get("nn"),
             "content": msg.get("txt")
         }
-        logger.info('ready insert: %s' % chat_message)
+        # logger.info('ready insert: %s' % chat_message)
         ChatMessageDao.insert(chat_message)
 
     def start(self):
@@ -100,7 +100,6 @@ class DouYuClient(AbstractClient):
                     self.start()
                 else:
                     logger.info("%s 重试次数达到三次，放弃" % self.room_id)
-                    DouYuJobDao.update_chat_status(self.room_id, DouYuJobDao.COMPLETE)
 
         def inner_keep_alive():
             """ 维持连接不断开 """
