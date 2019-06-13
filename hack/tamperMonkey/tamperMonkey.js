@@ -50,6 +50,10 @@
       },
       result => {
         console.log('result: ', result)
+        // 一定时间之后，关闭窗口
+        setTimeout(() => {
+          window.close()
+        }, 10000)
       }
     )
   }

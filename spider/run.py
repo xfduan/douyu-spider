@@ -1,4 +1,4 @@
-import time, threading, subprocess, shlex
+import time, threading, subprocess, shlex, webbrowser
 from spider.util.logger import get_logger
 
 from spider.client.douyu_client import DouYuClient
@@ -23,9 +23,9 @@ while True:
     all_jobs = DouYuJobDao.query_jobs()
     logger.info("获取到 %s 个任务：%s" % (len(all_jobs), all_jobs))
 
-    print(VIDEO_PROCESS_DICT)
-    print(CHAT_MESSAGE_RUNNING_ARR)
-    print(VIDEO_RECORD_RUNNING_ARR)
+    logger.info("====>>> video process: %s" % VIDEO_PROCESS_DICT)
+    logger.info("====>>> chat message running array: %s" % CHAT_MESSAGE_RUNNING_ARR)
+    logger.info("====>>> video record running array: %s" % VIDEO_RECORD_RUNNING_ARR)
 
     for job in all_jobs:
         room_id = job.get("room_id")
@@ -66,10 +66,13 @@ while True:
                 logger.info("%s 视频录制任务正在进行中..." % room_id)
         else:
             logger.info("%s 直播暂未更新直播源信息..." % room_id)
+            webbrowser.open("https://www.douyu.com/%s" % room_id)
 
-        for k in list(VIDEO_PROCESS_DICT.keys()):
-            if VIDEO_PROCESS_DICT[k].poll() is not None:
-                del VIDEO_PROCESS_DICT[k]
-                VIDEO_RECORD_RUNNING_ARR.remove(k)
+        for inner_room_id in list(VIDEO_PROCESS_DICT.keys()):
+            if VIDEO_PROCESS_DICT[inner_room_id].poll() is not None:
+                del VIDEO_PROCESS_DICT[inner_room_id]
+                VIDEO_RECORD_RUNNING_ARR.remove(inner_room_id)
+                DouYuJobDao.update_stream_url(inner_room_id, None)
+                webbrowser.open("https://www.douyu.com/%s" % inner_room_id)
 
     time.sleep(30)

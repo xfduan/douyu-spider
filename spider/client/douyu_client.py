@@ -2,7 +2,6 @@ import json, re, select, time, requests, threading
 from spider.client.live_socket import LiveSocket
 from spider.client.abstract_client import AbstractClient
 from spider.dao.chat_message_dao import ChatMessageDao
-from spider.dao.dou_yu_job_dao import DouYuJobDao
 from spider.util.logger import get_logger
 
 logger = get_logger(__name__)
@@ -75,7 +74,6 @@ class DouYuClient(AbstractClient):
             "user_name": msg.get("nn"),
             "content": msg.get("txt")
         }
-        # logger.info('ready insert: %s' % chat_message)
         ChatMessageDao.insert(chat_message)
 
     def start(self):
