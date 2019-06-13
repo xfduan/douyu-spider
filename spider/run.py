@@ -23,6 +23,10 @@ while True:
     all_jobs = DouYuJobDao.query_jobs()
     logger.info("获取到 %s 个任务：%s" % (len(all_jobs), all_jobs))
 
+    print(VIDEO_PROCESS_DICT)
+    print(CHAT_MESSAGE_RUNNING_ARR)
+    print(VIDEO_RECORD_RUNNING_ARR)
+
     for job in all_jobs:
         room_id = job.get("room_id")
         name = job.get("name")
@@ -53,7 +57,7 @@ while True:
                 try:
                     print("开始录制视频：%s" % room_id)
                     args = shlex.split(cmd)
-                    record = subprocess.Popen(args)
+                    record = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     # 进程映射添加进 VIDEO_PROCESS_DICT，方便到时候种植
                     VIDEO_PROCESS_DICT[room_id] = record
                 except Exception as e:
@@ -62,5 +66,10 @@ while True:
                 logger.info("%s 视频录制任务正在进行中..." % room_id)
         else:
             logger.info("%s 直播暂未更新直播源信息..." % room_id)
+
+        for k in list(VIDEO_PROCESS_DICT.keys()):
+            if VIDEO_PROCESS_DICT[k].poll() is not None:
+                del VIDEO_PROCESS_DICT[k]
+                VIDEO_RECORD_RUNNING_ARR.remove(k)
 
     time.sleep(30)
