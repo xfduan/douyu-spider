@@ -27,6 +27,7 @@ CREATE TABLE `dou_yu_job` (
   `stream_url` varchar(512) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '直播流地址',
   `chat_status` tinyint(2) DEFAULT '0' COMMENT '弹幕状态 0-新建 1-处理中 2-结束',
   `video_status` tinyint(2) DEFAULT '0' COMMENT '视频状态 0-新建 1-处理中 2-结束',
+  `del` tinyint(2) DEFAULT 0 COMMENT '是否删除 0-未删除 1-已删除',
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),

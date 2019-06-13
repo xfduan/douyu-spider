@@ -9,7 +9,7 @@ class DouYuJobDao(object):
     @staticmethod
     def query_jobs():
         executor = SqlExecutor()
-        sql = "select room_id, name, stream_url, chat_status, video_status from dou_yu_job;"
+        sql = "select room_id, name, stream_url, chat_status, video_status from dou_yu_job where del = 0;"
         tuples = executor.fetch_all(sql, DouYuJobDao.INIT)
         result = []
         for single in tuples:
@@ -25,6 +25,6 @@ class DouYuJobDao(object):
     @staticmethod
     def update_stream_url(room_id, stream_url):
         executor = SqlExecutor()
-        sql = "update dou_yu_job set stream_url = %s where room_id = %s;"
+        sql = "update dou_yu_job set stream_url = %s where room_id = %s and del = 0;"
         res = executor.update(sql, (stream_url, room_id))
         return res
