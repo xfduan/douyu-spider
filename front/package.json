@@ -14,7 +14,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "mobx": "^5.5.2",
     "mobx-react": "^5.3.5",
     "normalize.css": "^8.0.0",
