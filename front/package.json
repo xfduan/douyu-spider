@@ -12,7 +12,7 @@
     "lint": "yarn prettier && yarn tslint"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "babel-polyfill": "^6.26.0",
     "lodash": "^4.17.11",
     "mobx": "^5.5.2",
